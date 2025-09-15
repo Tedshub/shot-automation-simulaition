@@ -1,0 +1,1322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Otomasi Penargetan - Dark Theme</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0c0c0c 0%, #1a1a1a 50%, #2d2d2d 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #e0e0e0;
+            overflow-x: auto;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(30, 30, 30, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.5em;
+            margin-bottom: 30px;
+            background: linear-gradient(45deg, #00d4ff, #ff006e, #ffbe0b);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px rgba(0, 212, 255, 0.3);
+            font-weight: 700;
+        }
+
+        .control-panel {
+            background: linear-gradient(135deg, #1e1e1e 0%, #2d2d2d 100%);
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .control-panel h2 {
+            color: #00d4ff;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            text-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
+            font-weight: 600;
+        }
+
+        .controls-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .control-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .control-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(0, 212, 255, 0.3);
+        }
+
+        .control-item label {
+            display: block;
+            color: #b0b0b0;
+            margin-bottom: 8px;
+            font-weight: 500;
+            font-size: 0.9em;
+        }
+
+        .mode-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            background: linear-gradient(45deg, #404040 0%, #505050 100%);
+            color: #e0e0e0;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+            background: linear-gradient(45deg, #505050 0%, #606060 100%);
+        }
+
+        button.active {
+            background: linear-gradient(45deg, #00d4ff 0%, #0099cc 100%);
+            color: #000;
+            box-shadow: 0 4px 20px rgba(0, 212, 255, 0.4);
+            border-color: #00d4ff;
+        }
+
+        button.active:hover {
+            box-shadow: 0 8px 30px rgba(0, 212, 255, 0.6);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        button:disabled:hover {
+            transform: none;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            background: linear-gradient(45deg, #404040 0%, #505050 100%);
+        }
+
+        .kp-joystick-container {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            margin: 10px auto;
+            background: radial-gradient(circle, rgba(0, 212, 255, 0.1) 0%, rgba(255, 0, 110, 0.05) 100%);
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            border-radius: 15px;
+            box-shadow: 
+                0 0 20px rgba(0, 212, 255, 0.2),
+                inset 0 0 20px rgba(0, 212, 255, 0.1);
+        }
+
+        .kp-joystick {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(45deg, #00d4ff 0%, #ff006e 100%);
+            border: 2px solid #00d4ff;
+            border-radius: 50%;
+            cursor: pointer;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 15px rgba(0, 212, 255, 0.8);
+            transition: all 0.1s ease;
+        }
+
+        .kp-joystick:hover {
+            box-shadow: 0 0 25px rgba(0, 212, 255, 1);
+            transform: translate(-50%, -50%) scale(1.1);
+            border-color: #ff006e;
+        }
+
+        .kp-joystick.active {
+            box-shadow: 
+                0 0 30px rgba(0, 212, 255, 1),
+                0 0 20px rgba(255, 0, 110, 0.5);
+            transform: translate(-50%, -50%) scale(1.2);
+            border-color: #ff006e;
+        }
+
+        .kp-crosshair {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 120px;
+            height: 120px;
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: 5px;
+            pointer-events: none;
+        }
+
+        .kp-crosshair::before,
+        .kp-crosshair::after {
+            content: '';
+            position: absolute;
+            background: rgba(0, 212, 255, 0.5);
+        }
+
+        .kp-crosshair::before {
+            width: 1px;
+            height: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .kp-crosshair::after {
+            height: 1px;
+            width: 100%;
+            top: 50%;
+            left: 0;
+            transform: translateY(-50%);
+        }
+
+        .kp-values {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 12px;
+            color: #00d4ff;
+            text-shadow: 0 0 5px #00d4ff;
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 1024px) {
+            .main-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .panel {
+            background: rgba(30, 30, 30, 0.8);
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .panel h2 {
+            font-size: 1.3em;
+            margin-bottom: 20px;
+            color: #00d4ff;
+            text-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
+            font-weight: 600;
+        }
+
+        #cameraCanvas {
+            border: 3px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            cursor: crosshair;
+            display: block;
+            margin: 0 auto;
+            transition: all 0.3s ease;
+            background: #1a1a1a;
+        }
+
+        #cameraCanvas:hover {
+            border-color: #00d4ff;
+            box-shadow: 0 5px 30px rgba(0, 212, 255, 0.3);
+        }
+
+        .info-panel {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: #e0e0e0;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .step-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .step-button {
+            padding: 8px 16px;
+            font-size: 0.9em;
+            border-radius: 20px;
+            background: linear-gradient(45deg, #2d2d2d 0%, #404040 100%);
+            color: #b0b0b0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .step-button:hover {
+            background: linear-gradient(45deg, #404040 0%, #505050 100%);
+            color: #e0e0e0;
+        }
+
+        .step-button.active {
+            background: linear-gradient(45deg, #00d4ff 0%, #0099cc 100%);
+            color: #000;
+            box-shadow: 0 2px 15px rgba(0, 212, 255, 0.4);
+        }
+
+        .step-explanation {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            min-height: 150px;
+            border-left: 4px solid #00d4ff;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .step-explanation h3 {
+            color: #00d4ff;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
+        }
+
+        .step-explanation p {
+            color: #c0c0c0;
+            line-height: 1.6;
+        }
+
+        .step-explanation ul {
+            color: #b0b0b0;
+            margin-left: 20px;
+            margin-top: 10px;
+        }
+
+        .step-explanation li {
+            margin-bottom: 5px;
+            color: #b0b0b0;
+        }
+
+        .code-block {
+            background: linear-gradient(135deg, #0d1117 0%, #161b22 100%);
+            color: #58a6ff;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Fira Code', 'Courier New', monospace;
+            font-size: 0.9em;
+            margin-top: 10px;
+            overflow-x: auto;
+            border: 1px solid rgba(88, 166, 255, 0.2);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .servo-visualization {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .servo-visualization h3 {
+            color: #ff006e;
+            margin-bottom: 15px;
+            text-shadow: 0 0 10px rgba(255, 0, 110, 0.3);
+        }
+
+        .servo-item {
+            margin-bottom: 15px;
+        }
+
+        .servo-item label {
+            color: #c0c0c0;
+            font-size: 0.9em;
+            font-weight: 500;
+        }
+
+        .servo-progress {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 5px 0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .servo-fill {
+            height: 100%;
+            transition: all 0.3s ease;
+            border-radius: 4px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .servo-x .servo-fill {
+            background: linear-gradient(90deg, #00d4ff 0%, #0099cc 100%);
+            box-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+        }
+
+        .servo-y .servo-fill {
+            background: linear-gradient(90deg, #ff006e 0%, #cc0055 100%);
+            box-shadow: 0 0 10px rgba(255, 0, 110, 0.5);
+        }
+
+        .system-flow {
+            background: rgba(30, 30, 30, 0.8);
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            margin-bottom: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .system-flow h2 {
+            color: #00d4ff;
+            text-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
+            margin-bottom: 20px;
+        }
+
+        .flow-steps {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .flow-step {
+            padding: 12px 20px;
+            border-radius: 25px;
+            font-weight: 600;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.9em;
+        }
+
+        .flow-step:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .flow-step:nth-child(1) {
+            background: linear-gradient(135deg, #00d4ff 0%, #0099cc 100%);
+            color: #000;
+        }
+
+        .flow-step:nth-child(3) {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            color: #000;
+        }
+
+        .flow-step:nth-child(5) {
+            background: linear-gradient(135deg, #ffbe0b 0%, #fb8500 100%);
+            color: #000;
+        }
+
+        .flow-step:nth-child(7) {
+            background: linear-gradient(135deg, #ff006e 0%, #cc0055 100%);
+            color: #fff;
+        }
+
+        .flow-step:nth-child(9) {
+            background: linear-gradient(135deg, #8338ec 0%, #6f2dbd 100%);
+            color: #fff;
+        }
+
+        .flow-step:nth-child(11) {
+            background: linear-gradient(135deg, #f77f00 0%, #fcbf49 100%);
+            color: #000;
+        }
+
+        .flow-step:nth-child(13) {
+            background: linear-gradient(135deg, #06ffa5 0%, #4d8dff 100%);
+            color: #000;
+        }
+
+        .flow-arrow {
+            color: #00d4ff;
+            font-size: 1.5em;
+            font-weight: bold;
+            text-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+        }
+
+        .instructions {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: #e0e0e0;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .instructions h3 {
+            margin-bottom: 15px;
+            font-size: 1.2em;
+            color: #00d4ff;
+            text-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
+        }
+
+        .instructions ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .instructions li {
+            padding: 8px 0;
+            padding-left: 25px;
+            position: relative;
+            color: #c0c0c0;
+            line-height: 1.5;
+        }
+
+        .instructions li::before {
+            content: "▶";
+            position: absolute;
+            left: 0;
+            color: #00d4ff;
+            font-weight: bold;
+            text-shadow: 0 0 5px rgba(0, 212, 255, 0.5);
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .stat-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .stat-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(0, 212, 255, 0.3);
+        }
+
+        .stat-value {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #00d4ff;
+            text-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
+        }
+
+        .stat-label {
+            font-size: 0.8em;
+            color: #b0b0b0;
+            margin-top: 5px;
+            font-weight: 500;
+        }
+
+        .pulsing {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { 
+                border-color: rgba(255, 255, 255, 0.2);
+                box-shadow: 0 5px 30px rgba(0, 212, 255, 0.1);
+            }
+            50% { 
+                border-color: #00d4ff;
+                box-shadow: 0 5px 30px rgba(0, 212, 255, 0.5);
+            }
+            100% { 
+                border-color: rgba(255, 255, 255, 0.2);
+                box-shadow: 0 5px 30px rgba(0, 212, 255, 0.1);
+            }
+        }
+
+        /* Scrollbar styling for dark theme */
+        ::-webkit-scrollbar {
+            width: 12px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #1a1a1a;
+            border-radius: 6px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #404040 0%, #606060 100%);
+            border-radius: 6px;
+            border: 2px solid #1a1a1a;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, #505050 0%, #707070 100%);
+        }
+
+        /* Glow effects */
+        .glow-text {
+            text-shadow: 0 0 20px currentColor;
+        }
+
+        .glow-border {
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+        }
+
+        /* Mobile responsiveness improvements */
+        @media (max-width: 480px) {
+            .container {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 1.8em;
+            }
+            
+            .controls-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            #cameraCanvas {
+                max-width: 100%;
+                height: auto;
+            }
+            
+            .kp-joystick-container {
+                width: 150px;
+                height: 150px;
+            }
+            
+            .kp-joystick {
+                width: 30px;
+                height: 30px;
+            }
+            
+            .kp-crosshair {
+                width: 80px;
+                height: 80px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔫 Sistem Otomasi Penargetan - Dark Theme</h1>
+        
+        <!-- Control Panel -->
+        <div class="control-panel">
+            <h2>🎛️ Panel Kontrol</h2>
+            <div class="controls-grid">
+                <div class="control-item">
+                    <label>Mode Operasi</label>
+                    <div class="mode-buttons">
+                        <button id="manualButton" class="active" onclick="setMode('manual')">MANUAL</button>
+                        <button id="autoButton" onclick="setMode('auto')">AUTO</button>
+                    </div>
+                </div>
+                <div class="control-item">
+                    <label>Reset Sistem</label>
+                    <button onclick="resetSystem()">🔄 RESET</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="main-grid">
+            <!-- Control Algorithm -->
+            <div class="panel">
+                <h2>🤖 Algoritma Kontrol</h2>
+                
+                <div class="step-buttons">
+                    <button class="step-button active" onclick="setStep(0)">1. Object Detection</button>
+                    <button class="step-button" onclick="setStep(1)">2. Coordinate Conversion</button>
+                    <button class="step-button" onclick="setStep(2)">3. Error Calculation</button>
+                    <button class="step-button" onclick="setStep(3)">4. PID Control</button>
+                    <button class="step-button" onclick="setStep(4)">5. Servo Movement</button>
+                </div>
+
+                <div class="step-explanation" id="stepExplanation">
+                    <!-- Step explanation content will be inserted here -->
+                </div>
+
+                <div class="servo-visualization">
+                    <h3>⚙️ Posisi Servo</h3>
+                    <div class="servo-item servo-x">
+                        <label>Servo X (Horizontal): <span id="servoXValue">90.0</span>°</label>
+                        <div class="servo-progress">
+                            <div class="servo-fill" id="servoXFill" style="width: 50%"></div>
+                        </div>
+                    </div>
+                    <div class="servo-item servo-y">
+                        <label>Servo Y (Vertical): <span id="servoYValue">90.0</span>°</label>
+                        <div class="servo-progress">
+                            <div class="servo-fill" id="servoYFill" style="width: 50%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Camera Simulation -->
+            <div class="panel">
+                <h2>📹 Simulasi Kamera (Klik untuk target atau gunakan joystick)</h2>
+                <canvas id="cameraCanvas" width="400" height="300"></canvas>
+                <div class="info-panel">
+                    <div class="stats">
+                        <div class="stat-item">
+                            <div class="stat-value" id="crosshairX">200</div>
+                            <div class="stat-label">Crosshair X (px)</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="crosshairY">150</div>
+                            <div class="stat-label">Crosshair Y (px)</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="targetPixelX">200</div>
+                            <div class="stat-label">Target X (px)</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="targetPixelY">150</div>
+                            <div class="stat-label">Target Y (px)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Joystick Control -->
+            <div class="panel">
+                <h2>🕹️ Joystick Control</h2>
+                <div class="control-item">
+                    <label>KP Control (X & Y)</label>
+                    <div class="kp-joystick-container" id="kpJoystickContainer">
+                        <div class="kp-crosshair"></div>
+                        <div class="kp-joystick" id="kpJoystick"></div>
+                    </div>
+                    <div class="kp-values">
+                        <div>KP X: <span id="kpXValue">2.0</span></div>
+                        <div>KP Y: <span id="kpYValue">1.5</span></div>
+                    </div>
+                </div>
+                <div class="info-panel">
+                    <h3>📋 Status Joystick</h3>
+                    <p id="joystickStatus">Aktif (Mode Manual)</p>
+                    <p>Gunakan joystick untuk mengontrol crosshair pada mode manual</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- System Flow -->
+        <div class="system-flow">
+            <h2>🔄 Alur Sistem</h2>
+            <div class="flow-steps">
+                <div class="flow-step">📹 Kamera</div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-step">🤖 YOLO Detection</div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-step">📍 Target Tracking</div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-step">🎛️ PID Controller</div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-step">⚙️ Servo Movement</div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-step">📡 ESP32</div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-step">🔧 Aktuator</div>
+            </div>
+        </div>
+
+        <!-- Instructions -->
+        <div class="instructions">
+            <h3>📝 Cara Menggunakan Visualisasi</h3>
+            <ul>
+                <li>Pilih MODE MANUAL atau MODE AUTO dengan tombol terpisah</li>
+                <li>Pada MODE MANUAL: Gunakan joystick KP untuk menggerakkan crosshair</li>
+                <li>Pada MODE AUTO: Klik area kamera untuk set target, crosshair akan mengikuti dengan delay 1 detik</li>
+                <li>Adjust parameter KP dengan menggerakkan joystick KP Control</li>
+                <li>Klik tahapan algoritma untuk melihat penjelasan detail</li>
+                <li>Perhatikan bagaimana servo bergerak mengikuti pergerakan crosshair</li>
+                <li>Lihat perubahan real-time pada koordinat dan servo positions</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let currentMode = 'manual'; // 'manual' or 'auto'
+        let crosshairX = 200;
+        let crosshairY = 150;
+        let targetX = 200;
+        let targetY = 150;
+        let servoX = 90;
+        let servoY = 90;
+        let kpX = 2.0;
+        let kpY = 1.5;
+        let currentStep = 0;
+        let animationId = null;
+        let autoTrackingActive = false;
+
+        // Canvas setup
+        const canvas = document.getElementById('cameraCanvas');
+        const ctx = canvas.getContext('2d');
+        const frameWidth = 400;
+        const frameHeight = 300;
+        const centerX = frameWidth / 2;
+        const centerY = frameHeight / 2;
+
+        // KP Joystick variables
+        let kpJoystickDragging = false;
+        let kpJoystickX = 100; // Center of KP joystick container
+        let kpJoystickY = 100;
+
+        // Step explanations
+        const stepExplanations = [
+            {
+                title: "Object Detection (YOLO)",
+                content: `
+                    <h3>🤖 Object Detection (YOLO)</h3>
+                    <p>Model YOLO mendeteksi objek dan memberikan:</p>
+                    <ul>
+                        <li>• Bounding box coordinates</li>
+                        <li>• Confidence score</li>
+                        <li>• Object center position</li>
+                        <li>• Multi-object priority ranking</li>
+                    </ul>
+                    <div class="code-block">results = model(frame)<br>bbox = get_bounding_box(results)<br>center = calculate_center(bbox)<br>priority = sort_by_area(objects)</div>
+                `
+            },
+            {
+                title: "Coordinate Conversion",
+                content: `
+                    <h3>📐 Coordinate Conversion</h3>
+                    <p>Konversi pixel ke normalized coordinates:</p>
+                    <div class="code-block">x_norm = (crosshair_x - center_x) / (center_x / 15)<br>y_norm = (crosshair_y - center_y) / (center_y / 10)<br><br><span style="color: #00d4ff;">Current: x=${getNormalizedX().toFixed(2)}, y=${getNormalizedY().toFixed(2)}</span></div>
+                `
+            },
+            {
+                title: "Error Calculation",
+                content: `
+                    <h3>📊 Error Calculation</h3>
+                    <p>Hitung jarak dari center target:</p>
+                    <div class="code-block">x_error = ${getErrorX().toFixed(2)} (+ = kanan)<br>y_error = ${getErrorY().toFixed(2)} (+ = atas)<br><br><span style="color: #ff006e;">Distance: ${getDistance().toFixed(2)}</span></div>
+                `
+            },
+            {
+                title: "PID Control",
+                content: `
+                    <h3>🎛️ PID Control</h3>
+                    <p>Proportional control untuk smooth movement:</p>
+                    <div class="code-block">x_correction = KP_X × x_error<br>y_correction = KP_Y × y_error<br><br><span style="color: #43e97b;">x_corr: ${getCorrectionX().toFixed(2)}, y_corr: ${getCorrectionY().toFixed(2)}</span></div>
+                `
+            },
+            {
+                title: "Servo Movement",
+                content: `
+                    <h3>⚙️ Servo Movement</h3>
+                    <p>Aplikasi koreksi ke posisi servo:</p>
+                    <div class="code-block">new_servo_x = current_x - x_correction<br>new_servo_y = current_y + y_correction<br><br><span style="color: #ffbe0b;">Servo X: ${servoX.toFixed(1)}° (15-165°)<br>Servo Y: ${servoY.toFixed(1)}° (25-155°)</span></div>
+                `
+            }
+        ];
+
+        // Utility functions
+        function getNormalizedX() {
+            return (crosshairX - centerX) / (centerX / 15);
+        }
+
+        function getNormalizedY() {
+            return (crosshairY - centerY) / (centerY / 10);
+        }
+
+        function getErrorX() {
+            if (currentMode === 'auto') {
+                return (targetX - crosshairX) / (centerX / 15);
+            }
+            return getNormalizedX();
+        }
+
+        function getErrorY() {
+            if (currentMode === 'auto') {
+                return (targetY - crosshairY) / (centerY / 10);
+            }
+            return getNormalizedY();
+        }
+
+        function getCorrectionX() {
+            return kpX * getErrorX();
+        }
+
+        function getCorrectionY() {
+            return kpY * getErrorY();
+        }
+
+        function getDistance() {
+            const ex = getErrorX();
+            const ey = getErrorY();
+            return Math.sqrt(ex * ex + ey * ey);
+        }
+
+        // Canvas drawing with dark theme
+        function drawCanvas() {
+            // Clear canvas with dark background
+            ctx.fillStyle = '#0d1117';
+            ctx.fillRect(0, 0, frameWidth, frameHeight);
+
+            // Draw subtle grid
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+            ctx.lineWidth = 1;
+            for (let x = 0; x <= frameWidth; x += 20) {
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, frameHeight);
+                ctx.stroke();
+            }
+            for (let y = 0; y <= frameHeight; y += 20) {
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(frameWidth, y);
+                ctx.stroke();
+            }
+
+            // Draw center crosshair with glow effect (fixed center reference)
+            ctx.strokeStyle = '#666666';
+            ctx.lineWidth = 1;
+            ctx.shadowColor = '#666666';
+            ctx.shadowBlur = 5;
+            ctx.beginPath();
+            ctx.moveTo(centerX - 15, centerY);
+            ctx.lineTo(centerX + 15, centerY);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(centerX, centerY - 12);
+            ctx.lineTo(centerX, centerY + 12);
+            ctx.stroke();
+            ctx.shadowBlur = 0;
+
+            // Draw targeting crosshair (movable + symbol)
+            ctx.strokeStyle = '#00ff41';
+            ctx.lineWidth = 3;
+            ctx.shadowColor = '#00ff41';
+            ctx.shadowBlur = 10;
+            ctx.beginPath();
+            ctx.moveTo(crosshairX - 25, crosshairY);
+            ctx.lineTo(crosshairX + 25, crosshairY);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(crosshairX, crosshairY - 20);
+            ctx.lineTo(crosshairX, crosshairY + 20);
+            ctx.stroke();
+            ctx.shadowBlur = 0;
+
+            // Draw target if in auto mode
+            if (currentMode === 'auto') {
+                // Target marker with glow
+                ctx.strokeStyle = '#ff0080';
+                ctx.lineWidth = 3;
+                ctx.shadowColor = '#ff0080';
+                ctx.shadowBlur = 15;
+                ctx.strokeRect(targetX - 15, targetY - 15, 30, 30);
+                ctx.shadowBlur = 0;
+
+                // Target center dot
+                ctx.fillStyle = '#ff0080';
+                ctx.shadowColor = '#ff0080';
+                ctx.shadowBlur = 20;
+                ctx.beginPath();
+                ctx.arc(targetX, targetY, 4, 0, 2 * Math.PI);
+                ctx.fill();
+                ctx.shadowBlur = 0;
+
+                // Line from crosshair to target
+                if (Math.abs(targetX - crosshairX) > 5 || Math.abs(targetY - crosshairY) > 5) {
+                    ctx.strokeStyle = '#00d4ff';
+                    ctx.lineWidth = 2;
+                    ctx.shadowColor = '#00d4ff';
+                    ctx.shadowBlur = 10;
+                    ctx.setLineDash([8, 8]);
+                    ctx.beginPath();
+                    ctx.moveTo(crosshairX, crosshairY);
+                    ctx.lineTo(targetX, targetY);
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+                    ctx.shadowBlur = 0;
+                }
+
+                // Target label
+                ctx.fillStyle = 'rgba(255, 0, 128, 0.8)';
+                ctx.fillRect(targetX - 20, targetY - 35, 60, 20);
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 12px Arial';
+                ctx.fillText('Target', targetX - 17, targetY - 22);
+            }
+
+            // Draw coordinate system labels with glow
+            ctx.fillStyle = '#00ff41';
+            ctx.font = 'bold 12px Arial';
+            ctx.shadowColor = '#00ff41';
+            ctx.shadowBlur = 5;
+            ctx.fillText('X: -15 to +15', 10, 25);
+            ctx.fillText('Y: -10 to +10', 10, 45);
+            ctx.shadowBlur = 0;
+
+            // Draw mode indicator
+            const modeText = currentMode === 'auto' ? 'AUTO MODE' : 'MANUAL MODE';
+            const modeColor = currentMode === 'auto' ? '#00d4ff' : '#ffbe0b';
+            ctx.fillStyle = modeColor;
+            ctx.font = 'bold 14px Arial';
+            ctx.shadowColor = modeColor;
+            ctx.shadowBlur = currentMode === 'auto' ? 10 : 5;
+            ctx.fillText(modeText, frameWidth - 120, 25);
+            ctx.shadowBlur = 0;
+
+            // Draw targeting reticle at center (fixed reference)
+            ctx.strokeStyle = 'rgba(102, 102, 102, 0.4)';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, 40, 0, 2 * Math.PI);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, 60, 0, 2 * Math.PI);
+            ctx.stroke();
+        }
+
+        // Mode control functions
+        function setMode(mode) {
+            currentMode = mode;
+            const manualBtn = document.getElementById('manualButton');
+            const autoBtn = document.getElementById('autoButton');
+            
+            if (mode === 'manual') {
+                manualBtn.classList.add('active');
+                autoBtn.classList.remove('active');
+                autoTrackingActive = false;
+                document.getElementById('joystickStatus').textContent = "Aktif (Mode Manual)";
+                document.getElementById('kpJoystick').style.cursor = "pointer";
+                document.getElementById('kpJoystickContainer').style.opacity = "1";
+            } else {
+                autoBtn.classList.add('active');
+                manualBtn.classList.remove('active');
+                document.getElementById('joystickStatus').textContent = "Nonaktif (Mode Auto)";
+                document.getElementById('kpJoystick').style.cursor = "not-allowed";
+                document.getElementById('kpJoystickContainer').style.opacity = "0.5";
+            }
+            
+            updateDisplay();
+        }
+
+        // KP Joystick functions
+        function initKpJoystick() {
+            const kpJoystick = document.getElementById('kpJoystick');
+            const container = kpJoystick.parentElement;
+            
+            kpJoystick.addEventListener('mousedown', (e) => {
+                if (currentMode === 'manual') {
+                    kpJoystickDragging = true;
+                    kpJoystick.classList.add('active');
+                    e.preventDefault();
+                }
+            });
+
+            document.addEventListener('mousemove', (e) => {
+                if (kpJoystickDragging && currentMode === 'manual') {
+                    const rect = container.getBoundingClientRect();
+                    const containerCenterX = rect.width / 2;
+                    const containerCenterY = rect.height / 2;
+                    
+                    const relativeX = e.clientX - rect.left - containerCenterX;
+                    const relativeY = e.clientY - rect.top - containerCenterY;
+                    
+                    const maxDistance = 80; // Maximum distance from center
+                    const distance = Math.sqrt(relativeX * relativeX + relativeY * relativeY);
+                    
+                    if (distance <= maxDistance) {
+                        kpJoystickX = containerCenterX + relativeX;
+                        kpJoystickY = containerCenterY + relativeY;
+                    } else {
+                        const angle = Math.atan2(relativeY, relativeX);
+                        kpJoystickX = containerCenterX + Math.cos(angle) * maxDistance;
+                        kpJoystickY = containerCenterY + Math.sin(angle) * maxDistance;
+                    }
+                    
+                    // Update KP values based on joystick position
+                    kpX = 2.0 + (kpJoystickX - containerCenterX) / containerCenterX * 3; // Range 0.5-5
+                    kpY = 1.5 + (kpJoystickY - containerCenterY) / containerCenterY * 3; // Range 0.5-5
+                    
+                    // Clamp values
+                    kpX = Math.max(0.5, Math.min(5.0, kpX));
+                    kpY = Math.max(0.5, Math.min(5.0, kpY));
+                    
+                    updateKpJoystickPosition();
+                    updateDisplay();
+                }
+            });
+
+            document.addEventListener('mouseup', () => {
+                if (kpJoystickDragging) {
+                    kpJoystickDragging = false;
+                    kpJoystick.classList.remove('active');
+                }
+            });
+
+            // Initialize position
+            updateKpJoystickPosition();
+        }
+
+        function updateKpJoystickPosition() {
+            const kpJoystick = document.getElementById('kpJoystick');
+            kpJoystick.style.left = kpJoystickX + 'px';
+            kpJoystick.style.top = kpJoystickY + 'px';
+            kpJoystick.style.transform = 'translate(-50%, -50%)';
+            
+            document.getElementById('kpXValue').textContent = kpX.toFixed(1);
+            document.getElementById('kpYValue').textContent = kpY.toFixed(1);
+        }
+
+        // Manual mode joystick control (using KP joystick for crosshair movement)
+        function handleManualMovement() {
+            if (currentMode === 'manual') {
+                const containerCenter = 100; // Center of 200x200 container
+                const moveSpeed = 2;
+                
+                const deltaX = (kpJoystickX - containerCenter) * moveSpeed;
+                const deltaY = (kpJoystickY - containerCenter) * moveSpeed;
+                
+                // Move crosshair based on joystick position
+                crosshairX = Math.max(20, Math.min(frameWidth - 20, centerX + deltaX));
+                crosshairY = Math.max(20, Math.min(frameHeight - 20, centerY + deltaY));
+            }
+        }
+
+        // Auto tracking function
+        function autoTrackToTarget() {
+            if (currentMode === 'auto' && autoTrackingActive) {
+                const deltaX = targetX - crosshairX;
+                const deltaY = targetY - crosshairY;
+                const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+                
+                if (distance > 2) {
+                    // Move crosshair towards target with delay simulation
+                    const speed = 0.05; // Adjust for 1-second delay effect
+                    crosshairX += deltaX * speed;
+                    crosshairY += deltaY * speed;
+                }
+            }
+        }
+
+        function resetSystem() {
+            crosshairX = centerX;
+            crosshairY = centerY;
+            targetX = centerX;
+            targetY = centerY;
+            servoX = 90;
+            servoY = 90;
+            kpX = 2.0;
+            kpY = 1.5;
+            kpJoystickX = 100;
+            kpJoystickY = 100;
+            autoTrackingActive = false;
+            
+            // Visual feedback for reset
+            canvas.style.transform = 'scale(0.98)';
+            setTimeout(() => canvas.style.transform = '', 300);
+            
+            updateKpJoystickPosition();
+            updateDisplay();
+        }
+
+        function setStep(step) {
+            currentStep = step;
+            const buttons = document.querySelectorAll('.step-button');
+            buttons.forEach((btn, index) => {
+                btn.classList.toggle('active', index === step);
+                if (index === step) {
+                    btn.style.transform = 'scale(1.05)';
+                    setTimeout(() => btn.style.transform = '', 200);
+                }
+            });
+            updateStepExplanation();
+        }
+
+        function updateStepExplanation() {
+            const explanation = document.getElementById('stepExplanation');
+            explanation.innerHTML = stepExplanations[currentStep].content;
+            explanation.style.opacity = '0';
+            setTimeout(() => {
+                explanation.style.opacity = '1';
+                explanation.style.transition = 'opacity 0.3s ease';
+            }, 50);
+        }
+
+        // Enhanced canvas click handler for auto mode
+        canvas.addEventListener('click', (e) => {
+            if (currentMode === 'auto') {
+                const rect = canvas.getBoundingClientRect();
+                targetX = e.clientX - rect.left;
+                targetY = e.clientY - rect.top;
+                autoTrackingActive = true;
+                
+                // Visual feedback
+                canvas.style.transform = 'scale(1.02)';
+                setTimeout(() => canvas.style.transform = '', 200);
+            }
+            updateDisplay();
+        });
+
+        // Animation loop
+        function animate() {
+            if (currentMode === 'manual') {
+                handleManualMovement();
+            } else if (currentMode === 'auto') {
+                autoTrackToTarget();
+            }
+            
+            // Calculate new servo positions
+            const correctionX = getCorrectionX();
+            const correctionY = getCorrectionY();
+            
+            const newServoX = Math.max(15, Math.min(165, 90 - correctionX * 5));
+            const newServoY = Math.max(25, Math.min(155, 90 + correctionY * 5));
+            
+            // Smooth servo movement
+            const ease = 0.08;
+            servoX += (newServoX - servoX) * ease;
+            servoY += (newServoY - servoY) * ease;
+            
+            updateDisplay();
+            animationId = requestAnimationFrame(animate);
+        }
+
+        function startAnimation() {
+            if (!animationId) {
+                animate();
+            }
+        }
+
+        function stopAnimation() {
+            if (animationId) {
+                cancelAnimationFrame(animationId);
+                animationId = null;
+            }
+        }
+
+        // Enhanced display update
+        function updateDisplay() {
+            drawCanvas();
+            
+            // Update crosshair position info
+            document.getElementById('crosshairX').textContent = Math.round(crosshairX);
+            document.getElementById('crosshairY').textContent = Math.round(crosshairY);
+            document.getElementById('targetPixelX').textContent = Math.round(targetX);
+            document.getElementById('targetPixelY').textContent = Math.round(targetY);
+            
+            // Update servo positions
+            document.getElementById('servoXValue').textContent = servoX.toFixed(1);
+            document.getElementById('servoYValue').textContent = servoY.toFixed(1);
+            
+            // Update servo progress bars
+            const servoXPercent = ((servoX - 15) / (165 - 15)) * 100;
+            const servoYPercent = ((servoY - 25) / (155 - 25)) * 100;
+            
+            document.getElementById('servoXFill').style.width = servoXPercent + '%';
+            document.getElementById('servoYFill').style.width = servoYPercent + '%';
+            
+            // Update step explanation if dynamic
+            if (currentStep > 1) {
+                updateStepExplanation();
+            }
+        }
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            switch(e.key) {
+                case ' ':
+                    e.preventDefault();
+                    setMode(currentMode === 'manual' ? 'auto' : 'manual');
+                    break;
+                case 'r':
+                case 'R':
+                    resetSystem();
+                    break;
+                case '1':
+                case '2':
+                case '3':
+                case '4':
+                case '5':
+                    setStep(parseInt(e.key) - 1);
+                    break;
+            }
+        });
+
+        // Initialization
+        document.addEventListener('DOMContentLoaded', () => {
+            document.body.style.opacity = '0';
+            setTimeout(() => {
+                document.body.style.opacity = '1';
+                document.body.style.transition = 'opacity 0.5s ease';
+            }, 100);
+            
+            initKpJoystick();
+            updateDisplay();
+            updateStepExplanation();
+            startAnimation(); // Start with manual mode animation
+            
+            console.log('🔫 Sistem Otomasi Penargetan - Updated Version Loaded');
+            console.log('💡 Keyboard shortcuts:');
+            console.log('   SPACE - Toggle Manual/Auto mode');
+            console.log('   R - Reset system');
+            console.log('   1-5 - Switch algorithm steps');
+        });
+
+        // Mouse tracking for enhanced interactivity
+        canvas.addEventListener('mousemove', (e) => {
+            if (currentMode === 'auto') {
+                canvas.style.cursor = 'crosshair';
+            } else {
+                canvas.style.cursor = 'default';
+            }
+        });
+    </script>
+</body>
+</html>
