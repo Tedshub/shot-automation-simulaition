@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem Otomasi Penargetan - Dark Theme</title>
+    <title>Simulasi Sistem Otomasi Penargetan</title>
     <style>
         * {
             margin: 0;
@@ -41,181 +41,6 @@
             -webkit-text-fill-color: transparent;
             text-shadow: 0 0 30px rgba(0, 212, 255, 0.3);
             font-weight: 700;
-        }
-
-        .control-panel {
-            background: linear-gradient(135deg, #1e1e1e 0%, #2d2d2d 100%);
-            padding: 25px;
-            border-radius: 15px;
-            margin-bottom: 30px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .control-panel h2 {
-            color: #00d4ff;
-            margin-bottom: 20px;
-            font-size: 1.5em;
-            text-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
-            font-weight: 600;
-        }
-
-        .controls-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-        }
-
-        .control-item {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 15px;
-            border-radius: 10px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.3s ease;
-        }
-
-        .control-item:hover {
-            background: rgba(255, 255, 255, 0.08);
-            border-color: rgba(0, 212, 255, 0.3);
-        }
-
-        .control-item label {
-            display: block;
-            color: #b0b0b0;
-            margin-bottom: 8px;
-            font-weight: 500;
-            font-size: 0.9em;
-        }
-
-        .mode-buttons {
-            display: flex;
-            gap: 10px;
-        }
-
-        button {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            background: linear-gradient(45deg, #404040 0%, #505050 100%);
-            color: #e0e0e0;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
-            background: linear-gradient(45deg, #505050 0%, #606060 100%);
-        }
-
-        button.active {
-            background: linear-gradient(45deg, #00d4ff 0%, #0099cc 100%);
-            color: #000;
-            box-shadow: 0 4px 20px rgba(0, 212, 255, 0.4);
-            border-color: #00d4ff;
-        }
-
-        button.active:hover {
-            box-shadow: 0 8px 30px rgba(0, 212, 255, 0.6);
-        }
-
-        button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        button:disabled:hover {
-            transform: none;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-            background: linear-gradient(45deg, #404040 0%, #505050 100%);
-        }
-
-        .kp-joystick-container {
-            position: relative;
-            width: 200px;
-            height: 200px;
-            margin: 10px auto;
-            background: radial-gradient(circle, rgba(0, 212, 255, 0.1) 0%, rgba(255, 0, 110, 0.05) 100%);
-            border: 2px solid rgba(0, 212, 255, 0.3);
-            border-radius: 15px;
-            box-shadow: 
-                0 0 20px rgba(0, 212, 255, 0.2),
-                inset 0 0 20px rgba(0, 212, 255, 0.1);
-        }
-
-        .kp-joystick {
-            position: absolute;
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(45deg, #00d4ff 0%, #ff006e 100%);
-            border: 2px solid #00d4ff;
-            border-radius: 50%;
-            cursor: pointer;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            box-shadow: 0 0 15px rgba(0, 212, 255, 0.8);
-            transition: all 0.1s ease;
-        }
-
-        .kp-joystick:hover {
-            box-shadow: 0 0 25px rgba(0, 212, 255, 1);
-            transform: translate(-50%, -50%) scale(1.1);
-            border-color: #ff006e;
-        }
-
-        .kp-joystick.active {
-            box-shadow: 
-                0 0 30px rgba(0, 212, 255, 1),
-                0 0 20px rgba(255, 0, 110, 0.5);
-            transform: translate(-50%, -50%) scale(1.2);
-            border-color: #ff006e;
-        }
-
-        .kp-crosshair {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 120px;
-            height: 120px;
-            border: 1px solid rgba(0, 212, 255, 0.3);
-            border-radius: 5px;
-            pointer-events: none;
-        }
-
-        .kp-crosshair::before,
-        .kp-crosshair::after {
-            content: '';
-            position: absolute;
-            background: rgba(0, 212, 255, 0.5);
-        }
-
-        .kp-crosshair::before {
-            width: 1px;
-            height: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-
-        .kp-crosshair::after {
-            height: 1px;
-            width: 100%;
-            top: 50%;
-            left: 0;
-            transform: translateY(-50%);
-        }
-
-        .kp-values {
-            text-align: center;
-            margin-top: 10px;
-            font-size: 12px;
-            color: #00d4ff;
-            text-shadow: 0 0 5px #00d4ff;
         }
 
         .main-grid {
@@ -560,6 +385,195 @@
             font-weight: 500;
         }
 
+        /* Joystick Control Styles */
+        .joystick-panel {
+            background: linear-gradient(135deg, #1e1e1e 0%, #2d2d2d 100%);
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .joystick-panel h2 {
+            color: #00d4ff;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            text-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
+            font-weight: 600;
+        }
+
+        .joystick-controls {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .joystick-controls:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(0, 212, 255, 0.3);
+        }
+
+        .joystick-controls label {
+            display: block;
+            color: #b0b0b0;
+            margin-bottom: 8px;
+            font-weight: 500;
+            font-size: 0.9em;
+        }
+
+        .mode-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            background: linear-gradient(45deg, #404040 0%, #505050 100%);
+            color: #e0e0e0;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+            background: linear-gradient(45deg, #505050 0%, #606060 100%);
+        }
+
+        button.active {
+            background: linear-gradient(45deg, #00d4ff 0%, #0099cc 100%);
+            color: #000;
+            box-shadow: 0 4px 20px rgba(0, 212, 255, 0.4);
+            border-color: #00d4ff;
+        }
+
+        button.active:hover {
+            box-shadow: 0 8px 30px rgba(0, 212, 255, 0.6);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        button:disabled:hover {
+            transform: none;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            background: linear-gradient(45deg, #404040 0%, #505050 100%);
+        }
+
+        .kp-joystick-container {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            margin: 10px auto;
+            background: radial-gradient(circle, rgba(0, 212, 255, 0.1) 0%, rgba(255, 0, 110, 0.05) 100%);
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            border-radius: 15px;
+            box-shadow: 
+                0 0 20px rgba(0, 212, 255, 0.2),
+                inset 0 0 20px rgba(0, 212, 255, 0.1);
+        }
+
+        .kp-joystick {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(45deg, #00d4ff 0%, #ff006e 100%);
+            border: 2px solid #00d4ff;
+            border-radius: 50%;
+            cursor: pointer;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 15px rgba(0, 212, 255, 0.8);
+            transition: all 0.1s ease;
+        }
+
+        .kp-joystick:hover {
+            box-shadow: 0 0 25px rgba(0, 212, 255, 1);
+            transform: translate(-50%, -50%) scale(1.1);
+            border-color: #ff006e;
+        }
+
+        .kp-joystick.active {
+            box-shadow: 
+                0 0 30px rgba(0, 212, 255, 1),
+                0 0 20px rgba(255, 0, 110, 0.5);
+            transform: translate(-50%, -50%) scale(1.2);
+            border-color: #ff006e;
+        }
+
+        .kp-crosshair {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 120px;
+            height: 120px;
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: 5px;
+            pointer-events: none;
+        }
+
+        .kp-crosshair::before,
+        .kp-crosshair::after {
+            content: '';
+            position: absolute;
+            background: rgba(0, 212, 255, 0.5);
+        }
+
+        .kp-crosshair::before {
+            width: 1px;
+            height: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .kp-crosshair::after {
+            height: 1px;
+            width: 100%;
+            top: 50%;
+            left: 0;
+            transform: translateY(-50%);
+        }
+
+        .kp-values {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 12px;
+            color: #00d4ff;
+            text-shadow: 0 0 5px #00d4ff;
+        }
+
+        .reset-button {
+            margin-top: 15px;
+            width: 100%;
+            background: linear-gradient(45deg, #ff006e 0%, #cc0055 100%);
+        }
+
+        .reset-button:hover {
+            background: linear-gradient(45deg, #ff2e8a 0%, #e00060 100%);
+        }
+
+        .joystick-status {
+            margin-top: 15px;
+            padding: 10px;
+            background: rgba(0, 212, 255, 0.1);
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid rgba(0, 212, 255, 0.2);
+        }
+
         .pulsing {
             animation: pulse 2s infinite;
         }
@@ -641,30 +655,16 @@
                 width: 80px;
                 height: 80px;
             }
+            
+            .mode-buttons {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🔫 Sistem Otomasi Penargetan - Dark Theme</h1>
-        
-        <!-- Control Panel -->
-        <div class="control-panel">
-            <h2>🎛️ Panel Kontrol</h2>
-            <div class="controls-grid">
-                <div class="control-item">
-                    <label>Mode Operasi</label>
-                    <div class="mode-buttons">
-                        <button id="manualButton" class="active" onclick="setMode('manual')">MANUAL</button>
-                        <button id="autoButton" onclick="setMode('auto')">AUTO</button>
-                    </div>
-                </div>
-                <div class="control-item">
-                    <label>Reset Sistem</label>
-                    <button onclick="resetSystem()">🔄 RESET</button>
-                </div>
-            </div>
-        </div>
+        <h1> Simulasi Sistem Otomasi Penargetan</h1>
 
         <div class="main-grid">
             <!-- Control Algorithm -->
@@ -726,10 +726,11 @@
                 </div>
             </div>
 
-            <!-- Joystick Control -->
-            <div class="panel">
-                <h2>🕹️ Joystick Control</h2>
-                <div class="control-item">
+            <!-- Joystick Control Panel -->
+            <div class="joystick-panel">
+                <h2>🎮 Kontrol Joystick</h2>
+                
+                <div class="joystick-controls">
                     <label>KP Control (X & Y)</label>
                     <div class="kp-joystick-container" id="kpJoystickContainer">
                         <div class="kp-crosshair"></div>
@@ -740,10 +741,22 @@
                         <div>KP Y: <span id="kpYValue">1.5</span></div>
                     </div>
                 </div>
-                <div class="info-panel">
-                    <h3>📋 Status Joystick</h3>
-                    <p id="joystickStatus">Aktif (Mode Manual)</p>
-                    <p>Gunakan joystick untuk mengontrol crosshair pada mode manual</p>
+
+                <div class="joystick-controls">
+                    <label>Mode Operasi</label>
+                    <div class="mode-buttons">
+                        <button id="manualButton" class="active" onclick="setMode('manual')">MANUAL</button>
+                        <button id="autoButton" onclick="setMode('auto')">AUTO</button>
+                    </div>
+                </div>
+
+                <div class="joystick-controls">
+                    <label>Reset Sistem</label>
+                    <button class="reset-button" onclick="resetSystem()">🔄 RESET</button>
+                </div>
+
+                <div class="joystick-status" id="joystickStatus">
+                    <p>Joystick Aktif (Mode Manual)</p>
                 </div>
             </div>
         </div>
@@ -1032,13 +1045,13 @@
                 manualBtn.classList.add('active');
                 autoBtn.classList.remove('active');
                 autoTrackingActive = false;
-                document.getElementById('joystickStatus').textContent = "Aktif (Mode Manual)";
+                document.getElementById('joystickStatus').innerHTML = "<p>Joystick Aktif (Mode Manual)</p>";
                 document.getElementById('kpJoystick').style.cursor = "pointer";
                 document.getElementById('kpJoystickContainer').style.opacity = "1";
             } else {
                 autoBtn.classList.add('active');
                 manualBtn.classList.remove('active');
-                document.getElementById('joystickStatus').textContent = "Nonaktif (Mode Auto)";
+                document.getElementById('joystickStatus').innerHTML = "<p>Joystick Nonaktif (Mode Auto)</p>";
                 document.getElementById('kpJoystick').style.cursor = "not-allowed";
                 document.getElementById('kpJoystickContainer').style.opacity = "0.5";
             }
